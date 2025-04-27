@@ -1,7 +1,9 @@
 To run the NetLogo code on your Web Browser, please do the following:
 
-1. download the NetLogo file in this directory (namely the "fk_netlogo_code.nlogo") to your computer.
-2. go to the NetLogo's website through the following link (https://ccl.northwestern.edu/netlogo/).
+1. Download the NetLogo file in this directory (namely the "fk_netlogo_code.nlogo") to your computer.
+2. Go to the NetLogo's website through the following link (https://ccl.northwestern.edu/netlogo/).
 3. Click the Go to NetLogo Web to go to the NetLogo Web.
 4. On the top right corner of the screen, there is an option to upload a model. Click where it says "Choose File" and find and open the downloaded NetLogo code of interest (namely the "fk_netlogo_code.nlogo").
 5. Now you will be able to see variable adjustment section and the simulation display side by side as well as couple of useful graphs at the bottom.
+6. Adjust the desired variables. When you are done with your setup, click "Setup" to save your changes to the current iteration of the simulation.
+7. Click "Go" to run the simulation.
