@@ -22,7 +22,7 @@ Instructions for running the simulation will be added as the project develops.
 ## Future Enhancements
 Potential improvements include emergency vehicle prioritization, pedestrian crossings, and variable traffic signal timings.
 
-Q&A
+# Q&A
 
 ## Why NetLogo?
 NetLogo was chosen because it excels at agent-based modeling, allowing each car to operate as an independent agent that makes localized decisions based on its environment. In this project, where the focus is on how car agents' reaction behaviors (acceleration and deceleration) impact overall traffic flow, NetLogo’s ability to easily model individual behavior and observe emergent system patterns is crucial. Additionally, NetLogo provides built-in tools for real-time visualization, simple parameter adjustment (such as acceleration values), and automatic data plotting, making it ideal for iterative experimentation with vehicle dynamics.
