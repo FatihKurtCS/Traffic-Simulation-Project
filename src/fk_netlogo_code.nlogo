@@ -21,6 +21,7 @@ turtles-own
   work      ;; the patch where they work
   house     ;; the patch where they live
   goal      ;; where am I currently headed
+  travel-time    ;; tracks how many ticks each car has been alive, upgrade 1
 ]
 
 patches-own
@@ -98,7 +99,7 @@ to setup-globals
   set grid-y-inc world-height / grid-size-y
 
   ;; don't make acceleration 0.1 since we could get a rounding error and end up on a patch boundary
-  set acceleration 0.099
+  set acceleration 0.099 ;; default was 0.099
 end
 
 ;; Make the patches have appropriate colors, set up the roads and intersections agentsets,
@@ -186,6 +187,7 @@ to go
   ;; set the cars’ speed, move them forward their speed, record data for plotting,
   ;; and set the color of the cars to an appropriate color based on their speed
   ask turtles [
+    set travel-time travel-time + 1  ;; 🔥 Add this FIRST inside ask turtles, upgrade 2
     face next-patch ;; car heads towards its goal
     set-car-speed
     fd speed
@@ -405,6 +407,21 @@ to label-subject
   ]
 end
 
+; 🔥 Insert here: upgrade 3
+
+to plot-average-travel-time
+  set-current-plot "Average Travel Time"
+  plot mean [travel-time] of turtles
+end
+
+to plot-average-queue-length
+  let num-intersections count patches with [intersection?]
+  if num-intersections > 0 [
+    set-current-plot "Average Queue Length"
+    plot (count turtles with [speed = 0]) / num-intersections
+  ]
+end
+
 
 ; Copyright 2008 Uri Wilensky.
 ; See Info tab for full copyright and license.
@@ -471,6 +488,25 @@ false
 "set-plot-y-range 0 speed-limit" ""
 PENS
 "default" 1 0 -16777216 true "" "plot mean [speed] of turtles"
+
+PLOT
+500
+460
+750
+610
+Average Queue Length
+Time
+Average Queue Length
+0
+100
+0
+10
+true
+false
+"" ""
+PENS
+"default" 1 0 -16777216 true "" "let num-intersections count patches with [intersection?] if num-intersections > 0 [ plot (count turtles with [speed = 0]) / num-intersections ]"
+
 
 SLIDER
 110
