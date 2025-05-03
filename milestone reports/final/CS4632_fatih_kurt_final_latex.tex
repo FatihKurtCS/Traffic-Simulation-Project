@@ -1,0 +1,392 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{pdflscape}
+\usepackage{appendix}
+
+\title{Evaluating Traffic Flow Using Agent-Based Simulation in NetLogo}
+\author{Fatih Kurt \\
+Kennesaw State University \\
+CS 4632: Modeling and Simulation}
+\date{May 1, 2025}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\newpage
+% ------------------ Abstract ------------------
+\section{Abstract}
+
+This project investigates traffic dynamics in a grid-based city layout using agent-based modeling in NetLogo. The primary objective was to explore how changes in acceleration and vehicle count affect key traffic metrics such as average speed, queue length, and wait time. Sensitivity analysis revealed that increased acceleration improves average speed but may lead to longer queues and higher stop rates, while decreased acceleration results in smoother but slower traffic flow. Scenario analysis further showed that combining lower acceleration with fewer cars significantly reduces congestion, while higher acceleration combined with higher vehicle density worsens it. These findings highlight nonlinear interactions between vehicle behavior and traffic load, emphasizing the importance of coordinated traffic policy and infrastructure planning. The results validate the model's responsiveness to behavioral inputs and demonstrate NetLogo’s potential as a tool for simulating emergent traffic phenomena.
+
+\newpage
+% ------------------ Introduction ------------------
+\section{Introduction}
+
+Urban traffic congestion remains a persistent challenge, driven by increasing population densities, limited infrastructure, and dynamic human behaviors. Traditional modeling approaches often fall short in capturing the micro-level interactions between individual vehicles and the environment. To address this, the present project leverages agent-based modeling to simulate traffic flow on a grid-based city layout.
+
+The main objective of this simulation is to explore how varying driving behaviors—modeled through changes in acceleration—and different levels of vehicle density influence traffic conditions. Key performance indicators such as average vehicle speed, average queue length at intersections, and overall wait times are used to evaluate system performance under diverse conditions.
+
+The simulation is built using NetLogo, a platform well-suited for agent-based experiments due to its accessible syntax and strong visualization capabilities. By integrating sensitivity and scenario analyses into the simulation runs, the project aims to assess how robust the traffic system is under varied conditions, while also drawing parallels to realistic driving environments. The broader goal is to demonstrate the usefulness of agent-based simulations in understanding and improving traffic management strategies.
+
+\newpage
+% ------------------ Model Overview ------------------
+\section{Model Overview}
+
+The simulation model is based on the \textit{Traffic Grid Goal} model provided in the NetLogo Model Library, with extensions and modifications to suit the specific goals of this project. The environment represents a city grid consisting of horizontal and vertical roads intersecting at regular intervals. Each intersection is equipped with a traffic light that can operate in either automatic or manual mode.
+
+\subsection{Agents and Environment}
+
+The only agents in the model are cars (turtles), which are initialized with two key locations: \textit{house} and \textit{work}. Each car repeatedly travels between these two destinations, simulating daily commuting patterns. The road network is built on a fixed-size grid, and cars move through this environment by choosing patches (representing roads) that minimize the distance to their current goal.
+
+Cars adjust their speed dynamically in response to their surroundings. Specifically, they slow down or stop when:
+\begin{itemize}
+    \item Another car is directly in front of them,
+    \item They approach a red light at an intersection,
+    \item Their current speed exceeds the speed limit or they must decelerate for safety.
+\end{itemize}
+Speed changes are governed by an \textit{acceleration} parameter, which determines how quickly a car can speed up or slow down.
+
+\subsection{Traffic Signals and Control}
+
+Traffic lights are placed at all intersections. These signals can be set to switch automatically at a defined phase interval or controlled manually for more direct experimentation. Signal status determines whether cars may proceed through an intersection or must stop and wait.
+
+\subsection{Performance Metrics}
+
+The simulation tracks and visualizes several key performance indicators (KPIs) over time:
+\begin{itemize}
+    \item \textbf{Average speed of cars:} Represents overall flow efficiency.
+    \item \textbf{Average queue length:} Measures congestion at intersections.
+    \item \textbf{Average wait time:} Captures how long cars are delayed.
+    \item \textbf{Number of stopped cars:} Indicates the extent of traffic buildup.
+\end{itemize}
+These metrics are updated in real time and logged to CSV files for post-simulation analysis.
+
+\subsection{Extensions Made}
+
+To support more in-depth analysis, the model was extended beyond the default configuration to include:
+\begin{itemize}
+    \item Data logging and export for all tracked metrics.
+    \item New plot and statistical summaries within the NetLogo interface.
+\end{itemize}
+
+This architecture allows the simulation to flexibly accommodate sensitivity testing and scenario-based comparisons, providing a strong foundation for evaluating traffic dynamics under varying conditions.
+
+\newpage
+% ------------------ Simulation Results ------------------
+\section{Simulation Results}
+
+This section presents the final results obtained from the core simulation runs conducted prior to sensitivity and scenario analyses. These initial tests varied only the acceleration parameter to observe how traffic performance metrics responded under different driving aggressiveness levels. Each test used the same number of cars (50) and a fixed grid size.
+
+\subsection{Key Metrics Analyzed}
+
+The following key metrics were recorded during the simulation:
+
+\begin{itemize}
+    \item \textbf{Average Queue Length}: Mean number of cars waiting at intersections.
+    \item \textbf{Average Speed of Cars}: Mean speed of all moving agents.
+    \item \textbf{Average Wait Time}: How long, on average, each car was stopped.
+    \item \textbf{Number of Stopped Cars}: Total number of cars stopped per tick.
+\end{itemize}
+
+\subsection{Results Summary}
+
+The results indicated clear trends in traffic behavior as acceleration values changed. Below are bar charts summarizing the average values of each metric over the duration of the simulation for the four test cases:
+
+\begin{itemize}
+    \item \textbf{Test 1:} Default acceleration ($0.099$)
+    \item \textbf{Test 2:} Reduced acceleration ($0.0792$)
+    \item \textbf{Test 3:} Increased acceleration ($0.149$)
+    \item \textbf{Test 4:} Most aggressive acceleration ($0.199$)
+\end{itemize}
+
+\vspace{1em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Average Queue Length Across Test Bar Graph.png}
+    \caption{Average Queue Length across acceleration configurations.}
+    \label{fig:avg-queue-length-m5}
+\end{figure}
+
+\noindent As seen in Figure~\ref{fig:avg-queue-length-m5}, increased acceleration led to longer queues, suggesting more abrupt stopping behavior under aggressive driving conditions. This aligns with expectations, as higher acceleration often results in faster speeds followed by sharper braking.
+
+Additional figures for average speed, wait time, and number of stopped cars showed similar behavioral patterns and will be included in the appendix for reference.
+
+Overall, these baseline results established a performance benchmark for comparing further sensitivity and scenario tests.
+
+\newpage
+% ------------------ Scenario and Sensitivity Analysis ------------------
+\section{Scenario and Sensitivity Analysis}
+
+This section presents deeper exploration into the model's robustness and behavior under varying conditions. Two distinct analytical methods were used: sensitivity analysis and scenario analysis. The former focused on understanding how small changes in a key parameter affected results, while the latter explored how combinations of conditions shaped traffic dynamics.
+
+\subsection{Sensitivity Analysis}
+
+The sensitivity analysis concentrated on the \textbf{acceleration} parameter, as it directly governs how aggressively cars speed up and slow down in response to traffic. Five acceleration levels were tested:
+
+\begin{itemize}
+    \item Test 1: $0.099$ (baseline)
+    \item Test 2: $0.0891$ ($-10\%$)
+    \item Test 3: $0.0792$ ($-20\%$)
+    \item Test 4: $0.1089$ ($+10\%$)
+    \item Test 5: $0.1188$ ($+20\%$)
+\end{itemize}
+
+Each configuration was simulated using 50 cars and a fixed grid. Key metrics, including average queue length, speed, wait time, and number of stopped cars, were recorded and compared.
+
+\vspace{1em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{bar_queue_length_plot.png}
+    \caption{Sensitivity Analysis: Average Queue Length vs. Acceleration}
+    \label{fig:sensitivity-queue}
+\end{figure}
+
+\vspace{1em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Spring 2025/bar_average_speed_plot.png}
+    \caption{Sensitivity Analysis: Average Speed vs. Acceleration}
+    \label{fig:sensitivity-speed}
+\end{figure}
+
+\vspace{1em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Spring 2025/bar_average_wait_plot.png}
+    \caption{Sensitivity Analysis: Average Wait Time vs. Acceleration}
+    \label{fig:sensitivity-wait}
+\end{figure}
+
+\vspace{1em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Spring 2025/bar_stopped_cars_plot.png}
+    \caption{Sensitivity Analysis: Average Number of Stopped Cars vs. Acceleration}
+    \label{fig:sensitivity-stopped}
+\end{figure}
+
+The results demonstrate that higher acceleration values (e.g., $0.1188$) led to more frequent stops, longer wait times, and decreased overall traffic smoothness. Conversely, smoother driving (e.g., $0.0792$) improved average speed and reduced stops, although the effects were not strictly linear.
+
+\subsection{Scenario Analysis}
+
+Scenario analysis was performed by varying two parameters: \textbf{acceleration} and \textbf{number of cars}. Three scenarios were designed to simulate real-world conditions:
+
+\begin{itemize}
+    \item \textbf{Scenario 1 (Baseline)}: 50 cars, acceleration $= 0.099$
+    \item \textbf{Scenario 2 (Optimistic)}: 40 cars, acceleration $= 0.0792$ (smoother driving + lighter traffic)
+    \item \textbf{Scenario 3 (Pessimistic)}: 60 cars, acceleration $= 0.1188$ (aggressive driving + congestion)
+\end{itemize}
+
+Each scenario was run independently, and key metrics were recorded and compared.
+
+\vspace{1em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Spring 2025/scenario_bar_queue_length_plot.png}
+    \caption{Scenario Analysis: Average Queue Length per Scenario}
+    \label{fig:scenario-queue}
+\end{figure}
+
+\vspace{1em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Spring 2025/scenario_bar_average_speed_plot.png}
+    \caption{Scenario Analysis: Average Speed per Scenario}
+    \label{fig:scenario-speed}
+\end{figure}
+
+\vspace{1em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Spring 2025/scenario_bar_average_wait_plot.png}
+    \caption{Scenario Analysis: Average Wait Time per Scenario}
+    \label{fig:scenario-wait}
+\end{figure}
+
+\vspace{1em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Spring 2025/scenario_bar_stopped_cars_plot.png}
+    \caption{Scenario Analysis: Number of Stopped Cars per Scenario}
+    \label{fig:scenario-stopped}
+\end{figure}
+
+The \textbf{Optimistic Scenario} resulted in the best traffic flow, with lowest queue lengths and wait times, while the \textbf{Pessimistic Scenario} led to the highest congestion. These findings confirm that both traffic volume and driver behavior jointly shape overall performance.
+
+\newpage
+% ------------------ Verification and Validation Analysis ------------------
+\section{Verification and Validation Analysis}
+
+This section summarizes the methods used to ensure the model’s correctness and evaluate its accuracy. Both verification and validation efforts were conducted to assess whether the simulation behaves as intended and reflects plausible traffic dynamics.
+
+\subsection{Validation}
+
+The validation process for this project focused on internal consistency and behavioral expectations, as real-world data equivalent of the variables in the simulation code was not available for direct comparison. The parameters, agent behaviors, and environment were derived from the NetLogo “Traffic Grid Goal” model, which is widely used in modeling and simulation education and has undergone extensive peer review.
+
+Due to the educational nature of this project, historical data validation and cross-model validation were not performed. However, model behavior was compared against expectations—such as smoother acceleration reducing wait time—and these relationships held across scenario and sensitivity analyses.
+
+Acceptable error margins were implicitly guided by expected traffic behavior rather than strict numeric thresholds. For instance, a model producing significantly higher average queue lengths as acceleration increased would be deemed valid in that it reflects the impact of more aggressive driver behavior on congestion.
+
+\subsection{Verification}
+
+Verification focused on ensuring the model’s logical correctness, accurate data output, and reliable simulation behavior under various conditions.
+
+\begin{itemize}
+    \item \textbf{Code Inspection and Testing:}  
+    Core functions such as \texttt{record-data}, \texttt{set-car-speed}, and \texttt{next-phase} were verified through controlled tests and manual inspection. For example, the custom tracking logic for travel time was verified using test outputs and live runs.
+    
+    \item \textbf{Unit and Boundary Testing:}  
+    Simple edge-case runs—such as a single car on a small grid—were conducted to ensure the system worked without producing invalid behavior. The system behaved as expected under these reduced conditions.
+    
+    \item \textbf{Regression Testing:}  
+    Changes between milestones were tested for consistency. Since the core simulation logic remained stable across development phases, no significant regressions occurred.
+    
+    \item \textbf{Version Control:}  
+    GitHub was used throughout the project to manage milestone submissions, simulation outputs, and code revisions. Although full branching workflows were not implemented, version control provided a clear record of progression.
+\end{itemize}
+
+Together, these validation and verification practices provide confidence in the reliability of the model and its usefulness as a traffic simulation platform.
+
+\newpage
+% ------------------ Overall Analysis and Discussion ------------------
+\section{Overall Analysis and Discussion}
+
+This section synthesizes findings from the simulation results, sensitivity analysis, and scenario analysis in the context of the project’s goal: to understand how acceleration behavior and traffic density impact urban traffic flow. The results consistently aligned with theoretical expectations, providing both validation of model behavior and insight into real-world traffic phenomena.
+
+\subsection{Interpretation of Key Findings}
+
+Across all simulation runs, acceleration emerged as a critical factor in traffic performance. As seen in the sensitivity analysis, minor reductions in acceleration (representing smoother driving behavior) consistently improved performance metrics such as average queue length, average wait time, and average number of stopped cars. Conversely, increasing acceleration led to more congestion and degraded traffic performance, suggesting that aggressive acceleration styles cause more abrupt stops and inefficient flow.
+
+Scenario analysis reinforced this observation, showing that the pessimistic scenario (with increased acceleration and more cars) led to the worst performance across all metrics. In contrast, the optimistic scenario (reduced acceleration, fewer cars) showed the best overall flow. These outcomes align with real-world traffic principles, where smoother driving and lower traffic density typically reduce congestion.
+
+\subsection{Alignment with Project Objectives}
+
+The project sought to explore how agent-level parameters influence system-level behavior in a city traffic simulation. The clear relationships observed between acceleration, congestion, and speed provide strong support for this objective. The consistent patterns across both isolated and combined parameter variations affirm that agent behavior—particularly acceleration—has a nontrivial impact on overall traffic dynamics.
+
+\subsection{Unexpected Outcomes and Observations}
+
+One surprising observation was the non-linear nature of performance degradation. For example, while a 10\% increase in acceleration resulted in a noticeable rise in congestion, the 20\% increase had a disproportionately negative effect, suggesting a tipping point in traffic behavior. This highlights the importance of tuning agent parameters carefully, as small misadjustments can have large system-wide impacts.
+
+Another observation was the relatively stable average speed across many of the tests, even when queue length or wait time increased. This indicates that while congestion causes delays at intersections, vehicles still manage to accelerate between intersections, creating an illusion of average speed stability despite worsening traffic conditions.
+
+These findings offer valuable insights for designing agent-based models and tuning autonomous vehicle parameters in future smart city simulations.
+
+\newpage
+% ------------------ Conclusion ------------------
+\section{Conclusion}
+
+This project explored the impact of agent-level acceleration behavior on urban traffic dynamics using an agent-based simulation developed in NetLogo. By extending the Traffic Grid Goal model, the simulation introduced agents with individualized house and work destinations, as well as tunable acceleration parameters that influenced their driving style. The model tracked key traffic performance metrics including average queue length, average speed, average wait time, and number of stopped cars.
+
+Sensitivity analysis showed that small variations in acceleration significantly influenced system-wide performance. Smoother acceleration (lower values) consistently reduced congestion and waiting times, while aggressive acceleration had the opposite effect. Scenario analysis revealed that traffic density amplified these effects, with the best performance occurring under light traffic and smooth driving, and the worst under heavy traffic with aggressive drivers.
+
+Verification and validation processes, while limited by the absence of real-world data, confirmed that the model behaves consistently and as expected across multiple simulation configurations. Key outputs aligned with established traffic flow principles, and testing under controlled conditions affirmed logical consistency.
+
+\subsection{Future Work}
+
+Several improvements can be made to enhance the realism and flexibility of the model. These include:
+
+\begin{itemize}
+    \item Incorporating real-world traffic data to validate agent behavior and calibration of parameters such as acceleration and speed limits.
+    \item Adding support for dynamic traffic light timing and more sophisticated intersection logic.
+    \item Modeling additional agent types such as pedestrians, buses, or emergency vehicles for a more comprehensive traffic environment.
+    \item Implementing multi-lane roads and overtaking behavior to increase realism.
+    \item Improving the data logging structure to allow for automated batch testing and scenario comparisons.
+\end{itemize}
+
+This project provides a strong foundation for future research in traffic simulation, especially in the context of autonomous vehicle policy modeling and urban planning.
+
+\newpage
+% ------------------ References ------------------
+\begin{thebibliography}{9}
+
+\bibitem{Wilensky2015}
+U. Wilensky and W. Rand, \textit{An Introduction to Agent-Based Modeling: Modeling Natural, Social, and Engineered Complex Systems with NetLogo}. Cambridge, MA: MIT Press, 2015.
+
+\bibitem{NetLogo}
+U. Wilensky, \textit{NetLogo Traffic Grid Goal Model}. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL. Available: \url{https://ccl.northwestern.edu/netlogo/models/TrafficGridGoal}
+
+\bibitem{NetLogoTool}
+U. Wilensky, \textit{NetLogo [Software]}. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL, 1999. Available: \url{https://ccl.northwestern.edu/netlogo/}
+
+\bibitem{Python}
+Python Software Foundation, \textit{Python Language Reference}, version 3.x. Available: \url{https://www.python.org/}
+
+\bibitem{Pandas}
+The Pandas Development Team, “pandas-dev/pandas: Pandas,” Zenodo, 2020. Available: \url{https://doi.org/10.5281/zenodo.3509134}
+
+\bibitem{Matplotlib}
+J. D. Hunter, “Matplotlib: A 2D graphics environment,” \textit{Computing in Science \& Engineering}, vol. 9, no. 3, pp. 90–95, 2007.
+
+\end{thebibliography}
+
+\newpage
+% ------------------ Appendices ------------------
+\appendix
+\section*{Appendices}
+\addcontentsline{toc}{section}{Appendices}
+
+This appendix provides supplementary figures and materials referenced in the main body of the report. These include additional graphs from the simulation results and any extended data or source code snippets relevant to the project’s implementation and analysis.
+
+\section{Supplementary Simulation Graphs}
+
+\subsection{Average Speed of Cars}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Spring 2025/Average Speed Across Test Bar Graph.png}
+    \caption{Average speed of cars across simulation test runs.}
+\end{figure}
+
+\subsection{Average Wait Time of Cars}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Spring 2025/Average Wait Time Across Test Bar Graph.png}
+    \caption{Average wait time of cars across simulation test runs.}
+\end{figure}
+
+\subsection{Number of Stopped Cars}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Spring 2025/Average Stopped Cars Across Test Bar Graph.png}
+    \caption{Total number of stopped cars recorded during simulation test runs.}
+\end{figure}
+
+\newpage
+% ------------------ Additional Materials ------------------
+\section{Additional Materials}
+
+\subsection{Selected Code Snippet: Data Recording}
+\begin{lstlisting}[language=NetLogo, caption={NetLogo Procedure for Data Collection}]
+to record-data  ;; turtle procedure
+  ifelse speed = 0 [
+    set num-cars-stopped num-cars-stopped + 1
+    set wait-time wait-time + 1
+  ]
+  [ set wait-time 0 ]
+end
+\end{lstlisting}
+
+\subsection{Reference Definitions and Terms}
+\begin{itemize}
+    \item \textbf{Queue Length:} The number of cars stopped at intersections.
+    \item \textbf{Wait Time:} The amount of time a car remains idle before proceeding.
+    \item \textbf{Acceleration:} The rate at which car speed increases per tick.
+    \item \textbf{Stopped Cars:} Cars with speed zero at any given tick.
+    \item \textbf{Scenario Analysis:} Comparing simulation outcomes under different initial configurations.
+    \item \textbf{Sensitivity Analysis:} Evaluating the robustness of results by slightly changing input parameters.
+\end{itemize}
+
+
+\end{document}
